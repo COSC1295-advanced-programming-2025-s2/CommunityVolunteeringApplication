@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="371.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
       <VBox layoutX="125.0" layoutY="54.0" prefHeight="228.0" prefWidth="351.0" spacing="8.0">
          <children>
@@ -26,13 +26,21 @@
                </font>
             </Text>
             <TextField fx:id="password" layoutX="10.0" layoutY="38.0" prefHeight="32.0" prefWidth="351.0" />
-            <Label fx:id="msgLabel" prefHeight="73.0" prefWidth="350.0" />
+            <Label fx:id="msgLabel" alignment="TOP_LEFT" prefHeight="60.0" prefWidth="350.0" />
          </children>
       </VBox>
       <HBox layoutX="124.0" layoutY="287.0" prefHeight="84.0" prefWidth="378.0" spacing="40.0">
          <children>
-            <Button mnemonicParsing="false" onAction="#signupClicked" prefHeight="50.0" prefWidth="122.0" text="Sign up" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loginClicked" prefHeight="50.0" prefWidth="122.0" text="Login" />
+            <Button mnemonicParsing="false" onAction="#signupClicked" prefHeight="50.0" prefWidth="122.0" text="Sign up">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#loginClicked" prefHeight="50.0" prefWidth="122.0" text="Login">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
          </children>
       </HBox>
    </children>
