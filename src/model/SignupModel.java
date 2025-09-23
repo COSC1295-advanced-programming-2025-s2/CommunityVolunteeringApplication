@@ -40,6 +40,16 @@ public class SignupModel {
 		return check;
 	}
 	
+	public static String registerUser(User user) {
+		if (DbUtil.userOrEmailIsTaken(user.getUsername(), user.getEmail())) {
+			return "Username or email is already taken.";
+		}
+		boolean success = DbUtil.registerUser(user);
+		
+		//condition ? value_if_true : value_if_false;
+		return success ? null : "An error occurred whilst trying to register the user.";
+	}
+	
 	public static ArrayList<String> emailIsValid(String email){
 		ArrayList<String> check = new ArrayList<>();
 		
@@ -47,7 +57,7 @@ public class SignupModel {
 			return check;
 		}
 		
-		if (email.length() < 3){
+		if (underLen(email)){
 			check.add("3 characters");
 		}
 		//if the email doesnt contain the @ symbol OR if the email contains multiple @ symbols (for char in email, if char == '@' then char count + 1) > 1
@@ -59,6 +69,13 @@ public class SignupModel {
 		
 		return check;
 		
+	}
+	
+	public static boolean underLen(String str) {
+		if (str.length() > 0 && str.length() < 3) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static boolean emptyField(String input) {

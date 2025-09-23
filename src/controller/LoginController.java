@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.DbUtil;
 import model.LoginModel;
 
 import java.util.ArrayList;
@@ -33,7 +34,15 @@ public class LoginController implements SceneControlled {
 
 	@FXML 
 	private void loginClicked(ActionEvent event) {
-		msgLabel.setText("Login successful!");
+		String user = username.getText().trim();
+		String pass = password.getText().trim();
+		if (DbUtil.userLogin(user, pass)) {
+			msgLabel.setText("Login successful!");
+
+		}
+		else {
+			msgLabel.setText("Username or password is incorrect.");
+		}
 		
 	}
 	
@@ -41,7 +50,7 @@ public class LoginController implements SceneControlled {
 	@FXML 
 	private void signupClicked(ActionEvent event) {
 		try {
-			sceneController.switchScene("/signupMenu.fxml");;
+			sceneController.switchScene("/view/signupMenu.fxml");;
 			
 			//FXMLLoader loader = new FXMLLoader(getClass().getResource("/signupMenu.fxml"));
 			//Parent root = loader.load();

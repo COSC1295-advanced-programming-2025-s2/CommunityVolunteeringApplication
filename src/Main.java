@@ -14,7 +14,7 @@ public class Main extends Application {
 
         
         // The SceneController will now handle all scene setup and loading.
-        sceneController.switchScene("/loginMenu.fxml");;
+        sceneController.switchScene("/view/loginMenu.fxml");;
 
 
 	}
