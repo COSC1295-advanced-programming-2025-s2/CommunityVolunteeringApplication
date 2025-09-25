@@ -1,19 +1,17 @@
-import controller.LoginController;
 import controller.SceneController;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.ProjectsDatabase;
 
 public class Main extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
+		ProjectsDatabase.importData();
         SceneController sceneController = new SceneController(stage);
 
         
-        // The SceneController will now handle all scene setup and loading.
+        //the SceneController now handles all scene setup and loading so there is no need for scene setup here.
         sceneController.switchScene("/view/loginMenu.fxml");;
 
 

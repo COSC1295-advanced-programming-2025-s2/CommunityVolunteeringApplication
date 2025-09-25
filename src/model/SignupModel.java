@@ -10,7 +10,7 @@ public class SignupModel {
 		//basically checks if the string has any of the following characteristics, if not, it'll add a message to the check arraylist telling them what they need to add.
 		
 		//if password is under 8 characters
-		if (password == null || password.length() < 8) {
+		if (password.length() < 8) {
 			check.add("8 characters");		
 		}
 		
@@ -37,6 +37,49 @@ public class SignupModel {
 		
 		
 		
+		return check;
+	}
+	
+	public static ArrayList<String> usernameIsValid(String username){
+		ArrayList<String> check = new ArrayList<>();
+		
+		if (underLen(username)) {
+			check.add("be above or equal to 3 characters");
+		}
+		else if (username.length() > 20) {
+			check.add("be below 20 characters");
+		}
+		
+		if (username.matches(".*[^a-zA-Z0=9].*")) {
+			check.add("have no special symbols or whitespaces");
+		}
+		
+		return check;
+	}
+	
+	public static ArrayList<String> nameIsValid(String name){
+		ArrayList<String> check = new ArrayList<>();
+		
+		if (name.isEmpty()) {
+			return check;
+		}
+		
+		
+		
+		String[] fullName = name.split(" ");
+		if (fullName.length == 1 || fullName.length > 2) {
+			check.add("your full name (make sure to have a space between your first and last name and dont include your middle name)");
+		}
+		
+		else {
+			if (fullName[0].length() < 2) {
+				check.add("at least 2 characters in your first name");				
+			}
+			
+			if (fullName[1].length() < 2) {
+				check.add("at least 2 characters in your last name");				
+			}
+		}
 		return check;
 	}
 	

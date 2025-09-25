@@ -11,7 +11,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="642.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SignupController">
    <children>
-      <VBox layoutX="111.0" layoutY="114.0" prefHeight="483.0" prefWidth="378.0" spacing="8.0">
+      <VBox layoutX="111.0" layoutY="114.0" prefHeight="494.0" prefWidth="378.0" spacing="8.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Full name" wrappingWidth="110.892578125">
                <font>
@@ -19,7 +19,7 @@
                </font>
             </Text>
             <TextField fx:id="name" prefHeight="32.0" prefWidth="351.0" />
-            <Label fx:id="nameLabel" prefHeight="17.0" prefWidth="384.0" />
+            <Label fx:id="nameLabel" prefHeight="51.0" prefWidth="378.0" textOverrun="CLIP" wrapText="true" />
             <Text layoutX="10.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" wrappingWidth="110.892578125">
                <font>
                   <Font size="21.0" />
