@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="511.0" prefWidth="717.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController">
+<AnchorPane prefHeight="658.0" prefWidth="723.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController">
    <children>
-      <VBox layoutX="24.0" layoutY="37.0" prefHeight="438.0" prefWidth="669.0" spacing="5.0">
+      <VBox layoutX="27.0" layoutY="29.0" prefHeight="600.0" prefWidth="669.0" spacing="5.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="27.0" AnchorPane.rightAnchor="27.0" AnchorPane.topAnchor="20.0">
          <children>
             <HBox prefHeight="53.0" prefWidth="556.0">
                <children>
@@ -22,24 +26,57 @@
                      </font>
                   </Label>
                   <MenuButton mnemonicParsing="false" prefHeight="44.0" prefWidth="157.0" text="Profile">
-                    <items>
-                      <MenuItem mnemonicParsing="false" onAction="#viewHistory" text="View History" />
-                      <MenuItem mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
+                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#viewHistory" text="View History" />
+                        <MenuItem mnemonicParsing="false" onAction="#changePassword" text="Change Password" />
                         <MenuItem mnemonicParsing="false" onAction="#logOut" text="Log out" />
-                    </items>
+                     </items>
                   </MenuButton>
                </children>
             </HBox>
-            <TableView fx:id="projectsTable" prefHeight="325.0" prefWidth="556.0">
-              <columns>
-                <TableColumn fx:id="titleCol" prefWidth="213.0" text="Project Title" />
-                <TableColumn fx:id="locationCol" prefWidth="132.0" text="Location" />
+            <TableView fx:id="projectsTable" prefHeight="424.0" prefWidth="669.0">
+               <columns>
+                  <TableColumn fx:id="titleCol" prefWidth="213.0" text="Project Title" />
+                  <TableColumn fx:id="locationCol" prefWidth="132.0" text="Location" />
                   <TableColumn fx:id="dayCol" prefWidth="72.0" text="Day" />
                   <TableColumn fx:id="hourlyCol" prefWidth="127.0" text="Hourly Value (AUD)" />
                   <TableColumn fx:id="slotsCol" prefWidth="124.0" text="Slots Remaining" />
-              </columns>
+               </columns>
             </TableView>
+            <HBox prefHeight="25.0" prefWidth="669.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Number of hours:" wrappingWidth="137.13671875">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+                  <Spinner fx:id="numOfHoursSpinner" prefHeight="25.0" prefWidth="65.0" />
+                  <Text layoutX="10.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="47.13671875">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+                  <Text layoutX="185.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Number of slots:" wrappingWidth="137.13671875">
+                     <font>
+                        <Font size="17.0" />
+                     </font>
+                  </Text>
+                  <Spinner fx:id="numOfSlotsSpinner" layoutX="148.0" layoutY="10.0" prefHeight="25.0" prefWidth="65.0" />
+               </children>
+            </HBox>
+            <Label fx:id="msgLabel" prefHeight="17.0" prefWidth="657.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0">
+               <buttons>
+                  <Button layoutX="585.0" layoutY="10.0" mnemonicParsing="false" onAction="#viewCart" prefHeight="40.0" prefWidth="94.0" text="view cart" />
+                  <Button minWidth="0.0" mnemonicParsing="false" onAction="#remove" prefHeight="40.0" prefWidth="363.0" text="remove from cart" />
+                  <Button layoutX="30.0" layoutY="10.0" mnemonicParsing="false" onAction="#add" prefHeight="40.0" prefWidth="94.0" text="add to cart" />
+               </buttons>
+            </ButtonBar>
          </children>
       </VBox>
    </children>
-</Pane>
+</AnchorPane>

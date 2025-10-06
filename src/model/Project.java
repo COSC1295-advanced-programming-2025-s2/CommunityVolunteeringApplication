@@ -8,6 +8,7 @@ public class Project {
 	private int registeredSlots;
 	private int totalSlots;
 	private int availableSlots;
+	private int projectId;
 	
 	public Project() {
 		
@@ -24,6 +25,17 @@ public class Project {
 		
 		
 	}
+	public Project(int projectId, String title, String location, String day, int hourly, int registeredSlots, int totalSlots, int availableSlots) {
+		this.projectId = projectId;
+		this.title = title;
+		this.location = location;
+		this.day = day;
+		this.hourly = hourly;
+		this.registeredSlots = registeredSlots;
+		this.totalSlots = totalSlots;
+		this.availableSlots = availableSlots;
+	}
+		
 	
 	//getters
 	
@@ -41,6 +53,14 @@ public class Project {
 	
 	public int getHourly() {
 		return hourly;
+	}
+	
+	public int getRegisteredSlots() {
+		return registeredSlots;
+	}
+	
+	public int getTotalSlots() {
+		return totalSlots;
 	}
 
 	

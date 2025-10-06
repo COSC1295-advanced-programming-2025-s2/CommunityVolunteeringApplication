@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.DbUtil;
+import model.PasswordModel;
 import model.SignupModel;
 import model.User;
 
@@ -63,9 +64,9 @@ public class SignupController implements SceneControlled {
 
 		
 		//this is the final check, we create the passwordcheck and if password is valid
-		ArrayList<String> pCheck = SignupModel.passwordIsValid(pass);
+		ArrayList<String> pCheck = PasswordModel.passwordIsValid(pass);
 		//we check for if all the other requirements are valid (if the label is empty then theres no more requirements so we go ahead)
-		if (nameLabel.getText().isEmpty() && emailLabel.getText().isEmpty() && usernameLabel.getText().isEmpty() && msgLabel.getText().isEmpty()) {
+		if (nameLabel.getText().isEmpty() && emailLabel.getText().isEmpty() && usernameLabel.getText().isEmpty() && msgLabel.getText().isEmpty() && pCheck.isEmpty()) {
 			User u = new User(fName,e,user,pass);
 			//and make the user
 			String result = SignupModel.registerUser(u);

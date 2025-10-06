@@ -10,7 +10,7 @@ N Projects can be registered and registrations modified
 
 N Registrations are validated
 
-N Log in and ser password update and encryption
+Y Log in with password update and encryption
 
 N Confirmation validated with confirmation code and date
 

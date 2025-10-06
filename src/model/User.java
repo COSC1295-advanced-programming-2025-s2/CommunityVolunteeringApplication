@@ -30,6 +30,13 @@ public class User {
 		
 	}
 	
+	public User(int id, String fullname, String username, String email) {
+		this.id = id;
+		this.fullname = fullname;
+		this.username = username;
+		this.email = email;
+	}
+	
 	
 	//getters
 	
@@ -48,6 +55,13 @@ public class User {
     
     public String getEmail() {
     	return email;
+    }
+    
+    public int getUserId() {
+    	return id;
+    }
+    public void setUserId(int userId) {
+    	id = userId;
     }
 
 

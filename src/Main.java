@@ -1,13 +1,13 @@
 import controller.SceneController;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import model.ProjectsDatabase;
+import model.DbUtil;
 
 public class Main extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
-		ProjectsDatabase.importData();
+		DbUtil.importProjects();
         SceneController sceneController = new SceneController(stage);
 
         
