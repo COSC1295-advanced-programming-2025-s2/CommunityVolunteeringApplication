@@ -50,6 +50,8 @@ public class LoginController implements SceneControlled {
 			//bandaid fix for now since I will have to change it eventually because the user will need to sign up to events and activities, meaning I'll need to have made
 			//a user object or some other thing instead of just needing the username. 
 			Session.setUser(user);
+			DbUtil.importProjects(); 
+			DbUtil.importRegistrations();
 			sceneController.switchScene("/view/dashboardMenu.fxml");
 
 		}

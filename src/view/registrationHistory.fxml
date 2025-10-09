@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="591.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.RegistrationHistoryController">
+   <children>
+      <VBox layoutX="38.0" layoutY="25.0" prefHeight="548.0" prefWidth="525.0" AnchorPane.bottomAnchor="18.0" AnchorPane.leftAnchor="38.0" AnchorPane.rightAnchor="37.0" AnchorPane.topAnchor="25.0">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Registration History" wrappingWidth="356.13671875">
+               <font>
+                  <Font name="System Bold" size="33.0" />
+               </font>
+            </Text>
+            <ScrollPane prefHeight="412.0" prefWidth="525.0">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="429.0" prefWidth="527.0">
+                     <children>
+                        <Label fx:id="msgLabel" alignment="TOP_LEFT" prefHeight="394.0" prefWidth="525.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </ScrollPane>
+            <Label fx:id="exportLabel" prefHeight="31.0" prefWidth="495.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0" prefWidth="200.0">
+              <buttons>
+                  <Button mnemonicParsing="false" onAction="#back" prefHeight="36.0" prefWidth="97.0" text="Back" />
+                <Button mnemonicParsing="false" onAction="#exportHistory" prefHeight="36.0" prefWidth="97.0" text="Export History" />
+              </buttons>
+            </ButtonBar>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

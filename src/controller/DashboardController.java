@@ -1,7 +1,10 @@
 package controller;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.util.Optional;
+import java.util.Set;
+import java.time.LocalDate;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Cart;
@@ -23,6 +27,7 @@ public class DashboardController implements SceneControlled{
 	
 	private SceneController sceneController;
 	private ObservableList<Project> projects = FXCollections.observableArrayList();		
+	private Set<Integer> registeredProjectIds;
 	
 	
 	@FXML
@@ -45,8 +50,8 @@ public class DashboardController implements SceneControlled{
 	
 	
 	@FXML
-	public void viewHistory() {
-		//WIP
+	public void viewHistory() throws IOException {
+		sceneController.switchScene("/view/registrationHistory.fxml");
 	}
 	
 	@FXML
@@ -68,8 +73,14 @@ public class DashboardController implements SceneControlled{
 		int hours = numOfHoursSpinner.getValue();
 		int slots = numOfSlotsSpinner.getValue();
 		
+		//we assign a number corresponding to the day so monday = 1 , tuesday = 2, etc so if the number of the project day is lower than our current day, then we can assume it 
+		//has alrdy passed. 
+        DayOfWeek day = LocalDate.now().getDayOfWeek();
+		if (selected.getDayNum() < day.getValue()) {
+			msgLabel.setText("This event has already passed, please pick one in the future.");
+		}
 		//if item is already in cart then 
-		if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
+		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
 			msgLabel.setText("Project is already in cart.");
 			
 		}
@@ -87,7 +98,7 @@ public class DashboardController implements SceneControlled{
 			msgLabel.setText("Please select a project to remove.");
 		}
 		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
-			Cart.getCart().remove(selected);
+			Cart.removeItem(selected);
 			msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully removed from cart!");
 		}
 		else {
@@ -99,7 +110,30 @@ public class DashboardController implements SceneControlled{
 	}
 	@FXML
 	public void viewCart() throws IOException {
+		DbUtil.importRegistrations();
 		sceneController.switchScene("/view/cartPage.fxml");
+		
+	}
+	
+	@FXML
+	public void update() {
+		Project selected = projectsTable.getSelectionModel().getSelectedItem();
+		int hours = numOfHoursSpinner.getValue();
+		int slots = numOfSlotsSpinner.getValue();
+		if (selected == null) {
+			msgLabel.setText("Please select a project to update");
+			
+		}
+		
+		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
+			Cart.updateItem(selected, hours, slots);
+			msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully updated!");
+
+		}
+		
+		else {
+			msgLabel.setText("Project was not found in cart.");
+		}
 		
 	}
 
@@ -114,6 +148,8 @@ public class DashboardController implements SceneControlled{
 	
 	public void initialize() {
 		welcomeLabel.setText("Welcome " + Session.getUser().getUsername() +"!");
+		registeredProjectIds = DbUtil.getProjectIds();
+		projects = DbUtil.getProjects();
 		//gets the title variable from the Project class and sets the value on the column 
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -121,8 +157,31 @@ public class DashboardController implements SceneControlled{
 		hourlyCol.setCellValueFactory(new PropertyValueFactory<>("hourly"));
 		slotsCol.setCellValueFactory(new PropertyValueFactory<>("availableSlots"));
 		
-		projects = DbUtil.getProjects();
+		
 		projectsTable.setItems(projects);
+		
+		//greys out any projects that the user has already signed up for.
+		projectsTable.setRowFactory(tv -> new TableRow<Project>() {
+		    @Override
+		    protected void updateItem(Project project, boolean empty) {
+		        super.updateItem(project, empty);
+		        
+		        if (project == null || empty) {
+		            setStyle("");
+		            setDisable(false);
+		        //if the list of project ids contains the project id of a row it means theyve alrdy signed up for it so we grey it out (change the colour and disable selection)
+		        } else if (registeredProjectIds.contains(project.getProjectId())) {
+		            setStyle("-fx-background-color: #d3d3d3;");
+		            setDisable(true);
+		        } else {
+		            setStyle("");
+		            setDisable(false);
+		        }
+		    }
+		});
+
+
+
 		
 		//setting up the spinners, both start at 1 with 1 being the minimum and 3 the max. 
 		SpinnerValueFactory<Integer> hoursFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 3, 1);
@@ -137,6 +196,8 @@ public class DashboardController implements SceneControlled{
 
 		
 	}
+	
+	
 	
 	
 	

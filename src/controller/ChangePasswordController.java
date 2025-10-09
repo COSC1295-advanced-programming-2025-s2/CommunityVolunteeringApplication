@@ -21,10 +21,10 @@ public class ChangePasswordController implements SceneControlled{
 	private Label msgLabel;
 	
 	@FXML
-	public void confirm() {
-		String currentP = currentPass.getText();
-		String newP = newPass.getText();
-		String confirmP = confirmPass.getText();
+	private void confirm() {
+		String currentP = currentPass.getText().trim();
+		String newP = newPass.getText().trim();
+		String confirmP = confirmPass.getText().trim();
 		//if the current password matches with password entered
 		//if the new passwords are the same
 		ArrayList<String> pCheck = model.PasswordModel.passwordIsValid(newP);
@@ -50,7 +50,7 @@ public class ChangePasswordController implements SceneControlled{
 	
 	
 	@FXML
-	public void back() throws IOException {
+	private void back() throws IOException {
 		sceneController.switchScene("/view/dashboardMenu.fxml");
 	}
 	

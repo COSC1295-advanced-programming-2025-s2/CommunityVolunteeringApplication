@@ -7,7 +7,6 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage stage) throws Exception {
-		DbUtil.importProjects();
         SceneController sceneController = new SceneController(stage);
 
         

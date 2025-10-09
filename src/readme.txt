@@ -6,19 +6,19 @@ Y Login
 
 Y read projects from database and display
 
-N Projects can be registered and registrations modified
+Y Projects can be registered and registrations modified
 
-N Registrations are validated
+Y Registrations are validated
 
 Y Log in with password update and encryption
 
 N Confirmation validated with confirmation code and date
 
-N Project slot availability updated after registration
+Y Project slot availability updated after registration
 
-N User can view participation history
+Y User can view participation history
 
-N User can log out with data persistence 
+Y User can log out with data persistence 
 
 N Admin user implementation
 

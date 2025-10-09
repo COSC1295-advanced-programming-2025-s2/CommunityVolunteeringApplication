@@ -1,5 +1,7 @@
 package model;
 
+import java.util.HashMap;
+
 public class Project {
 	private String title;
 	private String location;
@@ -9,6 +11,7 @@ public class Project {
 	private int totalSlots;
 	private int availableSlots;
 	private int projectId;
+	
 	
 	public Project() {
 		
@@ -34,6 +37,13 @@ public class Project {
 		this.registeredSlots = registeredSlots;
 		this.totalSlots = totalSlots;
 		this.availableSlots = availableSlots;
+	}
+	
+	public int getDayNum() {
+		HashMap<String, Integer> days = new HashMap<>();
+		days.put("Mon", 1); days.put("Tue", 2); days.put("Wed", 3); days.put("Thu", 4); days.put("Fri", 5); days.put("Sat", 6); days.put("Sun", 7);
+
+		return days.get(day);
 	}
 		
 	
@@ -68,9 +78,13 @@ public class Project {
 		return availableSlots;
 	}
 	
+	public int getProjectId() {
+		return projectId;
+	}
+	
 	@Override
 	public String toString() {
-		return title + "\n" + location + "\n" + day + "\n" + hourly + "\n";
+		return title + " at " + location + " on " + day + " ($" + hourly + " per hour)";
 	}
 	
 	

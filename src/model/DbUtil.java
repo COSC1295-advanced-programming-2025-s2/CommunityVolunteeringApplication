@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLPermission;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +21,9 @@ public class DbUtil {
 	private static final String DB_USER = "root";
     private static final String DB_PASS = "MegA!pAn3Ic";
     private static ObservableList<Project> projects = FXCollections.observableArrayList();
+    private static ArrayList<Registration> registrations = new ArrayList<>();
+    private static Set<Integer> projectIds = new HashSet<>();
+
     
     //connecting to the db
     public static Connection getConnection() throws SQLException {
@@ -94,6 +100,95 @@ public class DbUtil {
     public static ObservableList<Project> getProjects(){
     	return projects;
     }
+    
+    public static boolean projectRegistration(CartItem item) {
+        try (Connection conn = getConnection()) {
+        	
+        	
+        	//check if user has signed up for project
+            try (PreparedStatement checkStmt = conn.prepareStatement("SELECT COUNT(*) FROM registrations WHERE userId = ? AND projectId = ?")) {
+                checkStmt.setInt(1, Session.getUser().getUserId());
+                checkStmt.setInt(2, item.getProject().getProjectId());
+
+                try (ResultSet rs = checkStmt.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        return false; 
+                        //prevents duplicate registration
+                    }
+                }
+            }
+            
+            
+            
+            //insert registration
+            try (PreparedStatement stmt = conn.prepareStatement("INSERT INTO registrations (userId, projectId, hoursPerSlot, numberOfSlots, totalValue) VALUES (?, ?, ?, ?, ?)")) {
+                stmt.setInt(1, Session.getUser().getUserId());
+                stmt.setInt(2, item.getProject().getProjectId());
+                stmt.setInt(3, item.getHoursps());
+                stmt.setInt(4, item.getNumps());
+                stmt.setInt(5, item.getTotalValue());
+                stmt.executeUpdate();
+            }
+            
+            
+            //update slots
+            try (PreparedStatement updateStmt = conn.prepareStatement("UPDATE projects SET available_slots = available_slots - 1, registered_slots = registered_slots + 1 WHERE projectId = ? AND available_slots > 0")) {
+                updateStmt.setInt(1, item.getProject().getProjectId());
+                int ru = updateStmt.executeUpdate();
+                if (ru == 0) {
+                    throw new IllegalStateException();
+                }
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            System.err.println("Project registration failed: " + e.getMessage());
+            return false;
+
+        } catch (IllegalStateException e) {
+            System.err.println("Registration failed due to lack of available slots for project ID: " + item.getProject().getProjectId());
+            return false;
+        }
+
+     }
+    
+    public static void importRegistrations() {
+    	String sql = """
+    		    SELECT r.registrationId, r.confirmedAt, r.projectId, r.userId, p.title, p.location, p.day, r.numberOfSlots, r.hoursPerSlot, r.totalValue
+    		    FROM registrations r JOIN projects p ON r.projectId = p.projectId
+    		    WHERE r.userId = ? ORDER BY r.confirmedAt DESC
+    		""";
+    	
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
+    		stmt.setInt(1, Session.getUser().getUserId());
+    		ResultSet rs = stmt.executeQuery();
+    		
+    		while (rs.next()) {
+    			int projId = rs.getInt("projectId");
+    			projectIds.add(projId);
+    			Project pr = projects.stream().filter(p -> p.getProjectId() == projId).findFirst().orElse(null);
+    			
+    			registrations.add(new Registration(pr, rs.getInt("registrationId"), rs.getString("confirmedAt"), rs.getInt("userId"), 
+    					projId, rs.getInt("hoursPerSlot"), rs.getInt("numberOfSlots"),  rs.getInt("totalValue")));
+    			}
+    		
+    		}
+    	catch (SQLException e) {
+    		System.err.println("An error occured when getting registrations: " + e);
+    	}
+    }
+    
+    
+    public static ArrayList<Registration> getRegistrations(){
+    	return registrations;
+    }
+    
+    public static Set<Integer> getProjectIds(){
+    	return projectIds;
+    }
+  
+    
     
     
     public static boolean registerUser(User user) {

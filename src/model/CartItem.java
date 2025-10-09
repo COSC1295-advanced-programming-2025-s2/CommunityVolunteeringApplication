@@ -1,21 +1,43 @@
 package model;
 
 public class CartItem {
-	private Project project;
-	private int hoursps;
+	protected Project project;
+	protected int hoursps;
 	//hours per slot
-	private int numps;
+	protected int numOfSlots;
 	//number of slots
+	protected int totalValue;
 	
 	public CartItem() {
 		
 	}
 	
-	public CartItem(Project project, int hoursps, int numps) {
+	public CartItem(Project project, int hoursps, int numOfSlots) {
 		this.project = project;
 		this.hoursps = hoursps;
-		this.numps = numps;
+		this.numOfSlots = numOfSlots;
+		totalValue = getTotalValue();
 	}
+	
+	public CartItem(Project project, int hoursps, int numOfSlots, int totalValue) {
+		this.project = project;
+		this.hoursps = hoursps;
+		this.numOfSlots = numOfSlots;
+		this.totalValue = totalValue;
+		
+	}
+	
+	
+	
+	public void setHours(int hours) {
+		this.hoursps = hours;
+		
+	}
+	
+	public void setSlots(int slots) {
+		this.numOfSlots = slots;
+	}
+	//getters
 	
 	public Project getProject() {
 		return project;
@@ -26,7 +48,7 @@ public class CartItem {
 	}
 	
 	public int getNumps() {
-		return numps;
+		return numOfSlots;
 	}
 	
 	public String getTitle() {
@@ -39,6 +61,17 @@ public class CartItem {
 	
 	public String getLocation() {
 		return project.getLocation();
+	}
+	
+
+	public int getTotalValue() {
+		return project.getHourly()*hoursps*numOfSlots;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return project.getTitle() + " on " + project.getDay() + " (" + numOfSlots + " slots) (" + hoursps + " hours per slot)"; 
 	}
 
 }
