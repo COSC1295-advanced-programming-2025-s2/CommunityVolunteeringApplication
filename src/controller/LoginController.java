@@ -24,12 +24,6 @@ public class LoginController implements SceneControlled {
 	private Label usernameLabel;
 	
 	private SceneController sceneController;
-	
-	
-	@Override
-	public void setSceneController(SceneController sceneController) {
-		this.sceneController = sceneController;
-	}
 
 	@FXML 
 	private void loginClicked(ActionEvent event) throws IOException {
@@ -50,9 +44,13 @@ public class LoginController implements SceneControlled {
 			//bandaid fix for now since I will have to change it eventually because the user will need to sign up to events and activities, meaning I'll need to have made
 			//a user object or some other thing instead of just needing the username. 
 			Session.setUser(user);
-			DbUtil.importProjects(); 
-			DbUtil.importRegistrations();
-			sceneController.switchScene("/view/dashboardMenu.fxml");
+			if (user.getUsername().equals("admin")) {
+				sceneController.switchScene("/view/adminDashboard.fxml");
+			}
+			else {
+				sceneController.switchScene("/view/dashboardMenu.fxml");
+
+			}
 
 		}
 		else {
@@ -67,18 +65,17 @@ public class LoginController implements SceneControlled {
 		try {
 			sceneController.switchScene("/view/signupMenu.fxml");;
 			
-			//FXMLLoader loader = new FXMLLoader(getClass().getResource("/signupMenu.fxml"));
-			//Parent root = loader.load();
-			
-			//Stage stage = (Stage) msgLabel.getScene().getWindow();
-			//stage.setScene(new Scene(root));
-						
 			
 		}
 		
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Override
+	public void setSceneController(SceneController sceneController) {
+		this.sceneController = sceneController;
 	}
 	
 

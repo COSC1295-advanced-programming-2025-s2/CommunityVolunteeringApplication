@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import model.DbUtil;
 import model.PasswordModel;
 import model.SignupModel;
+import model.StringUtil;
 import model.User;
 
 public class SignupController implements SceneControlled {
@@ -35,7 +37,7 @@ public class SignupController implements SceneControlled {
 	
 	
 	@FXML 
-	public void signup() throws IOException {
+	private void signup() throws IOException {
 		String fName = name.getText().trim();
 		String e = email.getText().trim();
 		String user = username.getText().trim();
@@ -67,6 +69,7 @@ public class SignupController implements SceneControlled {
 		ArrayList<String> pCheck = PasswordModel.passwordIsValid(pass);
 		//we check for if all the other requirements are valid (if the label is empty then theres no more requirements so we go ahead)
 		if (nameLabel.getText().isEmpty() && emailLabel.getText().isEmpty() && usernameLabel.getText().isEmpty() && msgLabel.getText().isEmpty() && pCheck.isEmpty()) {
+			fName = StringUtil.toUpper(fName.split(" "));
 			User u = new User(fName,e,user,pass);
 			//and make the user
 			String result = SignupModel.registerUser(u);
@@ -92,7 +95,7 @@ public class SignupController implements SceneControlled {
 	}
 	
 	@FXML
-	public void backToLogin() throws IOException {
+	private void backToLogin() throws IOException {
 		//when the user clicks on the back to login hyperlink it sends them back to the login page
 		sceneController.switchScene("/view/loginMenu.fxml");
 	}
@@ -107,7 +110,12 @@ public class SignupController implements SceneControlled {
 		}
 	}
 	
+	@FXML
+	public void initialize() {
+		//no numbers 
+		name.setTextFormatter(new TextFormatter<>(c -> c.getControlNewText().matches("[a-zA-Z ]*") ? c : null));
 
+	}
 	@Override
 	public void setSceneController(SceneController sceneController) {
 		this.sceneController = sceneController;

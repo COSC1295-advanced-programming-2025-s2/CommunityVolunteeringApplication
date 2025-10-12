@@ -43,6 +43,7 @@ public class BookingController implements SceneControlled {
 	
 	@FXML
 	private void verify() {
+		//just because if someone enters nothing the system throws an error. 
 		String txt = codeTextField.getText();
 		if (txt.isEmpty()) {
 			return;
@@ -56,9 +57,10 @@ public class BookingController implements SceneControlled {
 				
 				bookingLabel.setText(BookingModel.getBookingConfirmation());
 				bookingSuccessfulLabel.setText("Booking was successful!");
+				//when booking is successful we clear the cart and import projects again to update the numbers + check if they've signed up for anything. 
 				Cart.getCart().clear();
 				DbUtil.importProjects(); 
-
+				
 				hiddenButton.setVisible(true);
 				confirmationCode.setVisible(false);
 				codeText.setVisible(false);
@@ -81,25 +83,26 @@ public class BookingController implements SceneControlled {
 		
 	}
 	@FXML
-	public void backToHomepage() throws IOException {
+	private void backToHomepage() throws IOException {
 		sceneController.switchScene("/view/dashboardMenu.fxml");
 	}
 	
 	@FXML
-	public void backToCart() throws IOException {
+	private void backToCart() throws IOException {
 		sceneController.switchScene("/view/cartPage.fxml");
 	}
 	
 	
 	
 	@FXML
-	public void initialize() {
+	private void initialize() {
 		confCode = BookingModel.generateCode();
 		confirmationCode.setText("Your code is: " + confCode);
 		
 		//ensures that only numbers are entered 
 		codeTextField.setTextFormatter(new TextFormatter<> (c -> c.getControlNewText().matches("\\d*") ? c : null));
 	}
+	
 	@Override
 	public void setSceneController(SceneController sceneController) {
 		this.sceneController = sceneController;

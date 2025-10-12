@@ -40,10 +40,6 @@ public class ChangePasswordController implements SceneControlled{
 		else {
 			msgLabel.setText("Password was incorrect, please try again.");
 		}
-		//fond user id 
-		
-		//then change new password to current password (do hashing as well)
-		//put success on the text label, else put requirements
 		
 		
 	}

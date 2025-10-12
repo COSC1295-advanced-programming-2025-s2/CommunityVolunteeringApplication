@@ -34,7 +34,7 @@
                   </MenuButton>
                </children>
             </HBox>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are able to sign up for as many projects as you'd like as long as they're not greyed out! If a project is greyed out it means that you have either already signed up for it, or an admin disabled signups for that project. Please note that the max number of hours or slots is 3." wrappingWidth="667.13671875" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="You are able to sign up for as many projects as you'd like as long as they're not greyed out! If a project is greyed out it means that you have already signed up for it. Please note that the max number of hours or slots is 3." wrappingWidth="667.13671875" />
             <TableView fx:id="projectsTable" prefHeight="424.0" prefWidth="669.0">
                <columns>
                   <TableColumn fx:id="titleCol" prefWidth="213.0" text="Project Title" />

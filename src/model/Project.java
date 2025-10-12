@@ -11,6 +11,7 @@ public class Project {
 	private int totalSlots;
 	private int availableSlots;
 	private int projectId;
+	private boolean signupAvailable;
 	
 	
 	public Project() {
@@ -28,7 +29,7 @@ public class Project {
 		
 		
 	}
-	public Project(int projectId, String title, String location, String day, int hourly, int registeredSlots, int totalSlots, int availableSlots) {
+	public Project(int projectId, String title, String location, String day, int hourly, int registeredSlots, int totalSlots, int availableSlots, int signupAvailable) {
 		this.projectId = projectId;
 		this.title = title;
 		this.location = location;
@@ -37,15 +38,34 @@ public class Project {
 		this.registeredSlots = registeredSlots;
 		this.totalSlots = totalSlots;
 		this.availableSlots = availableSlots;
+		if (signupAvailable == 1) {
+			this.signupAvailable = true;
+		}
+		else {
+			this.signupAvailable = false;
+		}
 	}
 	
+	public Project(String title, String location, String day, int hourly, int totalSlots) {
+		this.title = title;
+		this.location = location;
+		this.day = day;
+		this.hourly = hourly;
+		this.totalSlots = totalSlots;
+		this.availableSlots = totalSlots;
+		this.registeredSlots = 0;
+	}
+	public void setDay(String day) {
+		this.day = day;
+	}
 	public int getDayNum() {
 		HashMap<String, Integer> days = new HashMap<>();
 		days.put("Mon", 1); days.put("Tue", 2); days.put("Wed", 3); days.put("Thu", 4); days.put("Fri", 5); days.put("Sat", 6); days.put("Sun", 7);
 
 		return days.get(day);
 	}
-		
+	
+	
 	
 	//getters
 	
@@ -80,6 +100,10 @@ public class Project {
 	
 	public int getProjectId() {
 		return projectId;
+	}
+	
+	public boolean getSignupAvailable() {
+		return signupAvailable;
 	}
 	
 	@Override

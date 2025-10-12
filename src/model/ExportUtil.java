@@ -10,7 +10,7 @@ public class ExportUtil {
 	
     public static boolean exportHistoryToFile(List<Registration> registrations, String username) {
         String filename = "history_" + Session.getUser().getUsername() + ".txt";
-
+        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write("Participation History for " + username);
             writer.newLine();
@@ -18,13 +18,19 @@ public class ExportUtil {
             writer.newLine();
             writer.newLine();
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
             for (Registration r : registrations) {
                 writer.write(String.format("Registration ID: %04d", r.getRegistrationId()));
                 writer.newLine();
                 writer.write("Confirmed at: " + (r.getDate()));
                 writer.newLine();
+                
+                if (username.equals("admin")) {
+                    writer.write("User ID: " + r.getUserId());
+                    writer.newLine();
+                    writer.write("Project ID: " + r.getProjectId());
+                    writer.newLine();
+                }
+                
                 writer.write("Project Title: " + r.getProject().getTitle());
                 writer.newLine();
                 writer.write("Location: " + r.getProject().getLocation());

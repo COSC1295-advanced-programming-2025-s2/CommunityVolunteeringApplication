@@ -31,7 +31,7 @@ public class CartController implements SceneControlled{
 	
 	
 	@FXML
-	public void confirm() throws IOException {
+	private void confirm() throws IOException {
 		if (Cart.getCart().isEmpty()) {
 			msgLabel.setText("Cart is empty!");
 		}
@@ -44,7 +44,7 @@ public class CartController implements SceneControlled{
 	}
 	
 	@FXML
-	public void back() throws IOException {
+	private void back() throws IOException {
 		sceneController.switchScene("/view/dashboardMenu.fxml");
 		
 	}

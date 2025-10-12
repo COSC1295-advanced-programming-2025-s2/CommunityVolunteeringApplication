@@ -50,25 +50,25 @@ public class DashboardController implements SceneControlled{
 	
 	
 	@FXML
-	public void viewHistory() throws IOException {
+	private void viewHistory() throws IOException {
 		sceneController.switchScene("/view/registrationHistory.fxml");
 	}
 	
 	@FXML
-	public void changePassword() throws IOException {
+	private void changePassword() throws IOException {
 		sceneController.switchScene("/view/changePasswordMenu.fxml");
 	}
 	
 	
 	@FXML
-	public void logOut() throws IOException {
+	private void logOut() throws IOException {
 		DashboardModel.logout();
 		sceneController.switchScene("/view/loginMenu.fxml");
 	}
 	
 	
 	@FXML
-	public void add() {
+	private void add() {
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		int hours = numOfHoursSpinner.getValue();
 		int slots = numOfSlotsSpinner.getValue();
@@ -92,7 +92,7 @@ public class DashboardController implements SceneControlled{
 	}
 	
 	@FXML 
-	public void remove() {
+	private void remove() {
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		if (selected == null) {
 			msgLabel.setText("Please select a project to remove.");
@@ -109,14 +109,14 @@ public class DashboardController implements SceneControlled{
 		
 	}
 	@FXML
-	public void viewCart() throws IOException {
+	private void viewCart() throws IOException {
 		DbUtil.importRegistrations();
 		sceneController.switchScene("/view/cartPage.fxml");
 		
 	}
 	
 	@FXML
-	public void update() {
+	private void update() {
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		int hours = numOfHoursSpinner.getValue();
 		int slots = numOfSlotsSpinner.getValue();
@@ -147,6 +147,8 @@ public class DashboardController implements SceneControlled{
 	
 	
 	public void initialize() {
+		DbUtil.importProjects(); 
+		DbUtil.importRegistrations();
 		welcomeLabel.setText("Welcome " + Session.getUser().getUsername() +"!");
 		registeredProjectIds = DbUtil.getProjectIds();
 		projects = DbUtil.getProjects();
@@ -170,10 +172,15 @@ public class DashboardController implements SceneControlled{
 		            setStyle("");
 		            setDisable(false);
 		        //if the list of project ids contains the project id of a row it means theyve alrdy signed up for it so we grey it out (change the colour and disable selection)
-		        } else if (registeredProjectIds.contains(project.getProjectId())) {
+		        }
+		        else if (project.getSignupAvailable() == false) {
+		        	projectsTable.getItems().remove(project);
+		        }
+		        else if (registeredProjectIds.contains(project.getProjectId())) {
 		            setStyle("-fx-background-color: #d3d3d3;");
 		            setDisable(true);
-		        } else {
+		        } 
+		        else {
 		            setStyle("");
 		            setDisable(false);
 		        }

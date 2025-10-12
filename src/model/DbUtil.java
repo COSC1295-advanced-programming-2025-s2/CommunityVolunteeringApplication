@@ -21,7 +21,7 @@ public class DbUtil {
 	private static final String DB_USER = "root";
     private static final String DB_PASS = "MegA!pAn3Ic";
     private static ObservableList<Project> projects = FXCollections.observableArrayList();
-    private static ArrayList<Registration> registrations = new ArrayList<>();
+    private static ObservableList<Registration> registrations = FXCollections.observableArrayList();
     private static Set<Integer> projectIds = new HashSet<>();
 
     
@@ -83,10 +83,10 @@ public class DbUtil {
     
     //imports the projects from the mysql database into a observable list 
     public static void importProjects(){
-        String sql = "SELECT * FROM projects";
-        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql); ){
+    	projects.clear();
+        try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM projects"); ){
         	while (rs.next()) {
-        		projects.add(new Project(rs.getInt("projectId"), rs.getString("title"),rs.getString("location"),rs.getString("day"),rs.getInt("hourly"),rs.getInt("total_slots"),rs.getInt("registered_slots"),rs.getInt("available_slots")));
+        		projects.add(new Project(rs.getInt("projectId"), rs.getString("title"),rs.getString("location"),rs.getString("day"),rs.getInt("hourly"),rs.getInt("total_slots"),rs.getInt("registered_slots"),rs.getInt("available_slots"), rs.getInt("signupAvailable")));
         	}
         	
         	
@@ -100,6 +100,11 @@ public class DbUtil {
     public static ObservableList<Project> getProjects(){
     	return projects;
     }
+    
+    public static ObservableList<Registration> getRegistrations(){
+    	return registrations;
+    }
+    
     
     public static boolean projectRegistration(CartItem item) {
         try (Connection conn = getConnection()) {
@@ -153,7 +158,28 @@ public class DbUtil {
 
      }
     
+    public static void getAllRegistrations() {
+    	registrations.clear();
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT * from registrations")){
+    		ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {  
+    			int projId = rs.getInt("projectId");
+    			projectIds.add(projId);
+    			Project pr = projects.stream().filter(p -> p.getProjectId() == projId).findFirst().orElse(null);
+        		registrations.add(new Registration(pr,rs.getInt("registrationId"), rs.getString("confirmedAt"), rs.getInt("userId"), 
+    					projId, rs.getInt("hoursPerSlot"), rs.getInt("numberOfSlots"),  rs.getInt("totalValue")));
+
+            }
+    		
+    	}
+    	
+    	catch (SQLException e) {
+    		System.err.println("An error occured: " + e);
+    	}
+    }
+    
     public static void importRegistrations() {
+    	registrations.clear();
     	String sql = """
     		    SELECT r.registrationId, r.confirmedAt, r.projectId, r.userId, p.title, p.location, p.day, r.numberOfSlots, r.hoursPerSlot, r.totalValue
     		    FROM registrations r JOIN projects p ON r.projectId = p.projectId
@@ -180,25 +206,66 @@ public class DbUtil {
     }
     
     
-    public static ArrayList<Registration> getRegistrations(){
-    	return registrations;
-    }
+
     
     public static Set<Integer> getProjectIds(){
     	return projectIds;
     }
+    
+    public static boolean createProject(Project project) {
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("INSERT INTO projects (title, location, day, hourly, total_slots, registered_slots, available_slots) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+    		stmt.setString(1, project.getTitle());
+    		stmt.setString(2, project.getLocation());
+    		stmt.setString(3, project.getDay());
+    		stmt.setInt(4, project.getHourly());
+    		stmt.setInt(5, project.getTotalSlots());
+    		stmt.setInt(6, project.getRegisteredSlots());
+    		stmt.setInt(7, project.getAvailableSlots());
+    		stmt.executeUpdate();
+    		return true;
+
+
+    	}
+    	catch (SQLException e) {
+            System.err.println("Project creation failed: " + e.getMessage());
+            return false;
+
+    	}
+    }
+    
+    public static boolean enableOrDisableProject(Project project, boolean value) {
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("UPDATE projects SET signupAvailable = ? WHERE projectId = ?")){
+    		for (Project p: projects) {
+        		if (p.getTitle().equals(project.getTitle())) {
+            		stmt.setBoolean(1, value);
+            		stmt.setInt(2, p.getProjectId()); 
+            		stmt.executeUpdate();
+            		}
+
+    		}
+    		return true;
+    	}
+      	catch (SQLException e) {
+    		System.err.println("Error:  " + e);
+
+      		}
+		return false;    		
+    	}    
+    
+    public static boolean changeProject(Project project) {
+    	return true;
+    }
+    
   
     
     
     
     public static boolean registerUser(User user) {
-        String sql = "INSERT INTO users (username, password, fullname, email) VALUES (?, ?, ?, ?)";
-        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, user.getUsername());
-            //right now hashpassword does nothing but i'll change that when I implement it. 
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username, password, fullname, email) VALUES (?, ?, ?, ?)")) {
+            stmt.setString(1, user.getUsername().toLowerCase());
             stmt.setString(2, hashPassword(user.getPassword()));
             stmt.setString(3, user.getFullname());
-            stmt.setString(4, user.getEmail());
+            stmt.setString(4, user.getEmail().toLowerCase());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -208,8 +275,7 @@ public class DbUtil {
     }
     
     public static User userLogin(String username, String password) {
-    	String sql = "SELECT id, username, password, fullname, email FROM users WHERE username = ?";
-    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT id, username, password, fullname, email FROM users WHERE username = ?")) {
     		stmt.setString(1, username);
     		ResultSet rs = stmt.executeQuery();
     		if (rs.next()) {
@@ -229,8 +295,7 @@ public class DbUtil {
     }
     
     public static boolean userOrEmailIsTaken(String username, String email) {
-    	String sql = "SELECT id FROM users WHERE username = ? OR email = ?";
-    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT id FROM users WHERE username = ? OR email = ?")) {
     		stmt.setString(1, username);
     		stmt.setString(2, email);
     		ResultSet rs = stmt.executeQuery();

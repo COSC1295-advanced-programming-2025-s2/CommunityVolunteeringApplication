@@ -20,9 +20,9 @@ Y User can view participation history
 
 Y User can log out with data persistence 
 
-N Admin user implementation
+Y Admin user implementation
 
-N Admin dashboard (adding, removing, and editing projects)
+N Admin adding and editing projects
 
-N Admin disable and enable projects
+Y Admin disable and enable projects
 
