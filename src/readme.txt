@@ -12,7 +12,7 @@ Y Registrations are validated
 
 Y Log in with password update and encryption
 
-N Confirmation validated with confirmation code and date
+Y Confirmation validated with confirmation code and date
 
 Y Project slot availability updated after registration
 
