@@ -74,8 +74,12 @@ public class Project {
 		this.location = location;
 	}
 	
-	public void setHourly(int hourly) {
+	public boolean setHourly(int hourly) {
+		if (hourly < 0) {
+			return false;
+		}
 		this.hourly = hourly;
+		return true;
 	}
 	
 	public boolean setTotalSlots(int totalSlots) {

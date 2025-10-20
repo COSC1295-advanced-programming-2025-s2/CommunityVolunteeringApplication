@@ -15,22 +15,8 @@ import model.Project;
 import model.Session;
 import model.User;
 
-public class ProjectTest {
-	
-    private User user;
-    private Project p1;
-    private Project p2;
-    private CartItem c1;
-    private CartItem c2;
+public class CodeTest {
 
-    @BeforeEach
-    void setup() {
-    	//	public User(int id, String fullname, String email, String username, String password) {
-        user = new User(1,"Seth Rogan", "seth@gmail.com", "sethr", "sethR2030@");
-        Session.setUser(user);
-    }
-    
-    
     @Test
     void testConfirmationCodeGenerationAndValidation() {
         int code = BookingModel.generateCode();

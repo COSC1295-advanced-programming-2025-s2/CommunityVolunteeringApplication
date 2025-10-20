@@ -27,6 +27,8 @@ public class ExportUtil {
                 if (username.equals("admin")) {
                     writer.write("User ID: " + r.getUserId());
                     writer.newLine();
+                    writer.write("Full name of participant: " + DbUtil.getUserFullNameById(r.getUserId()));
+                    writer.newLine();
                     writer.write("Project ID: " + r.getProjectId());
                     writer.newLine();
                 }

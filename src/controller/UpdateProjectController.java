@@ -36,7 +36,7 @@ public class UpdateProjectController implements SceneControlled {
     
     @FXML
     private void updateProject() {
-    	//updates projects based on selected days 
+    	//if any of the fields are blank 
         if (titleField.getText().isBlank() || locationField.getText().isBlank() || hourlyField.getText().isBlank() || totalSlotsField.getText().isBlank()) {
             msgLabel.setText("Please fill in all fields.");
             return;
@@ -50,19 +50,21 @@ public class UpdateProjectController implements SceneControlled {
             
             project.setTitle(title);
             project.setLocation(location);
-            project.setHourly(hourly);
+            //if someone tries to enter a negative number for hourly it rejects the change.
+            //hypothetically this SHOULD not happen because we reject all changes that arent numerical so someone physically cannot enter -10
+            //however, i thought i'd throw in the extra check just in case. 
+            if (!project.setHourly(hourly)) {
+            	msgLabel.setText("Please makre sure the value for hourly is above or equal to 0.");
+            }
+            //set total slots will reject the change if its not above or equal to the amt of registered slots
             if (!project.setTotalSlots(totalSlots)) {
-            	msgLabel.setText("Please make sure the total slots is above the number of registered slots.");
+            	msgLabel.setText("Please make sure the total slots is above or equal to the number of registered slots.");
             }
             
             else if (DbUtil.updateProject()) {
                 msgLabel.setText("Project updated successfully!");
             }
             
-            else {
-            	msgLabel.setText("Something went wrong! Please try again.");
-            }
-
 
 
         } catch (NumberFormatException e) {
@@ -71,6 +73,10 @@ public class UpdateProjectController implements SceneControlled {
         } catch (SQLException e) {
             msgLabel.setText("Error updating project: " + e.getMessage());
             e.printStackTrace();
+        }
+        
+        catch (Exception e) {
+        	msgLabel.setText("Error updating project: " + e.getMessage());
         }
     }
     

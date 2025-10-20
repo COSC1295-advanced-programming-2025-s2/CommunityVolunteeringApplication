@@ -109,7 +109,8 @@ public class DashboardController implements SceneControlled{
 				DbUtil.removeFromCart(Session.getUser().getUserId(), selected.getProjectId());
 				msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully removed from cart!");
 			} catch (SQLException e) {
-				msgLabel.setText("An error occurred when trying to remove the project from the cart, please try again.");
+				msgLabel.setText("An error occurred when trying to remove the project from the cart:" + e);
+				System.out.println(e);
 				
 			}
 		}

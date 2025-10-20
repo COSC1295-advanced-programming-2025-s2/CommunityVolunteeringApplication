@@ -51,7 +51,7 @@
                   <Insets left="5.0" />
                </VBox.margin>
             </HBox>
-            <Label layoutX="10.0" layoutY="531.0" prefHeight="58.0" prefWidth="738.0" text="Because projects of the same title may have different values, please select the project you'd like to add days to. This does not affect removing project days as that will just remove whatever day is associated with the title." textOverrun="CLIP" wrapText="true">
+            <Label layoutX="10.0" layoutY="531.0" prefHeight="58.0" prefWidth="738.0" text="Because projects of the same title may have different values, please select the project you'd like to add days to. This does not affect removing project days however you will still need to select a project regardless." textOverrun="CLIP" wrapText="true">
                <font>
                   <Font size="14.0" />
                </font>

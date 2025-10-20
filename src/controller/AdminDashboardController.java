@@ -38,12 +38,6 @@ public class AdminDashboardController implements SceneControlled {
 	
 	
 	@FXML
-	private void add() throws IOException {
-		sceneController.switchScene("/view/createProjectMenu.fxml");
-		
-	}
-	
-	@FXML
 	private void enable() {
 		//selects the project
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
@@ -69,7 +63,6 @@ public class AdminDashboardController implements SceneControlled {
 	
 	@FXML
 	private void update() throws IOException {
-		//WIP
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		if (selected == null) {
 			msgLabel.setText("Please select a project.");
@@ -81,6 +74,9 @@ public class AdminDashboardController implements SceneControlled {
 		
 	}
 	
+	
+	
+	//scene switchers
 	@FXML
 	private void viewHistory() throws IOException {
 		sceneController.switchScene("/view/registrationHistory.fxml");
@@ -91,6 +87,14 @@ public class AdminDashboardController implements SceneControlled {
 		sceneController.switchScene("/view/loginMenu.fxml");
 		Session.clear();
 	}
+	
+	@FXML
+	private void add() throws IOException {
+		sceneController.switchScene("/view/createProjectMenu.fxml");
+		
+	}
+	
+	
 	
 	@FXML
 	private void disable() {

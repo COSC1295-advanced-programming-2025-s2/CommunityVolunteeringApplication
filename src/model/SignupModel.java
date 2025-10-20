@@ -26,7 +26,6 @@ public class SignupModel {
 		ArrayList<String> check = new ArrayList<>();
 		
 		if (name.isEmpty()) {
-			check.add("name cannot be empty");
 			return check;
 		}
 		

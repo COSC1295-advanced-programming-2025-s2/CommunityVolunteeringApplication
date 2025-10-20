@@ -22,7 +22,7 @@ Y User can log out with data persistence
 
 Y Admin user implementation
 
-N Admin adding and editing projects
+Y Admin adding and editing projects
 
 Y Admin disable and enable projects
 

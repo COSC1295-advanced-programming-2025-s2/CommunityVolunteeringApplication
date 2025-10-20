@@ -83,15 +83,9 @@ public class SelectProjectUpdateController implements SceneControlled {
 
 	@FXML
 	public void initialize() {
-        ObservableList<Project> projects = DbUtil.getProjects();
         project = Session.getProject();
-        ObservableList<Project> selectedProjects = FXCollections.observableArrayList();
+        ObservableList<Project> selectedProjects = DbUtil.getSelectedProjects(project);
         
-        for (Project p : projects) {
-        	if (p.getTitle().equals(project.getTitle())){
-        		selectedProjects.add(p);
-        	}
-        }
         
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -101,19 +95,19 @@ public class SelectProjectUpdateController implements SceneControlled {
 		totalSlotsCol.setCellValueFactory(new PropertyValueFactory<>("totalSlots"));		
 		projectsTable.setItems(selectedProjects);
         
-        for (Project p : projects) {
-        	if (p.getTitle().equals(project.getTitle())) {
-                switch (p.getDay().toLowerCase()) {
-                case "mon" -> mon.setSelected(true);
-                case "tue" -> tue.setSelected(true);
-                case "wed" -> wed.setSelected(true);
-                case "thu" -> thu.setSelected(true);
-                case "fri" -> fri.setSelected(true);
-                case "sat" -> sat.setSelected(true);
-                case "sun" -> sun.setSelected(true);
-                }
+		// if that project has a day (lets say monday), it checks the mon checkbox.
+        for (Project p : selectedProjects) {
+            switch (p.getDay().toLowerCase()) {
+            case "mon" -> mon.setSelected(true);
+            case "tue" -> tue.setSelected(true);
+            case "wed" -> wed.setSelected(true);
+            case "thu" -> thu.setSelected(true);
+            case "fri" -> fri.setSelected(true);
+            case "sat" -> sat.setSelected(true);
+            case "sun" -> sun.setSelected(true);
+            }
 
-        	}
+        	
         }
       }
 	

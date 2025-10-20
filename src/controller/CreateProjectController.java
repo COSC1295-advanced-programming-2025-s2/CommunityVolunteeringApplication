@@ -62,9 +62,8 @@ public class CreateProjectController implements SceneControlled {
 					msgLabel.setText("Project creation of " + title + " was successful!");
 				}
 				
-				//shouldnt be happening but its there.
 				else {
-					msgLabel.setText("Project creation failed, please try again.");
+					msgLabel.setText("Project creation failed: another project has the same title");
 				}
 
 			}			

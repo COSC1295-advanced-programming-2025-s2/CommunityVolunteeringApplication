@@ -41,11 +41,11 @@ public class LoginController implements SceneControlled {
 		
 		//if the user login comes back positive (i.e, we found the username and password in the system)
 		else if (user != null) {
-			//we change the scene to the dashboard, and then we pass on the username to the dashboard label with the method setUsername. This is a bit of a 
-			//bandaid fix for now since I will have to change it eventually because the user will need to sign up to events and activities, meaning I'll need to have made
-			//a user object or some other thing instead of just needing the username. 
 			Session.setUser(user);
+			//set the session user so that we can grab it easily. 
+			
 			if (user.getUsername().equals("admin")) {
+				//if the username of the user is admin we set it to the admin dashboard
 				user.setAdmin(true);
 				sceneController.switchScene("/view/adminDashboard.fxml");
 			}

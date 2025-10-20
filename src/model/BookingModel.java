@@ -8,7 +8,7 @@ public class BookingModel {
 	public static int generateCode() {
 		Random rand = new Random();
 		String str = "";
-		///maybe .. .make it so we have a string and we add random integers to that string and then we turn it back into a integer in the end. 
+		//we have an empty string, and we add a randomly generated number to that empty string. I avoided using 0 however I can use 0 if youd like 
 		for (int i = 0 ; i < 5 ; i ++) {
 			int code = rand.nextInt(1,9);
 			str += code;

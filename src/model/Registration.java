@@ -40,6 +40,10 @@ public class Registration extends CartItem {
 		return userId;
 	}
 	
+	public String getFullName() {
+		return DbUtil.getUserFullNameById(userId);
+	}
+	
 	
 	
 	

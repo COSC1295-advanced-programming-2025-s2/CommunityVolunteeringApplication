@@ -142,6 +142,18 @@ public class DbUtil {
     	return registrations;
     }
     
+    public static ObservableList<Project> getSelectedProjects(Project project){
+        ObservableList<Project> selectedProjects = FXCollections.observableArrayList();
+        
+        for (Project p : projects) {
+        	if (p.getTitle().equals(project.getTitle())){
+        		selectedProjects.add(p);
+        	}
+        }
+        
+        return selectedProjects;
+    }
+    
     
     public static boolean projectRegistration(CartItem item) {
         try (Connection conn = getConnection()) {
@@ -203,6 +215,7 @@ public class DbUtil {
      }
     
     public static void getAllRegistrations() {
+    	//for if an admin signs in
     	registrations.clear();
     	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT * from registrations")){
     		ResultSet rs = stmt.executeQuery();
@@ -224,6 +237,8 @@ public class DbUtil {
     
     public static void importRegistrations() {
     	registrations.clear();
+    	//i always clear the table to avoid duplicates
+    	
     	String sql = """
     		    SELECT r.registrationId, r.confirmedAt, r.projectId, r.userId, p.title, p.location, p.day, r.numberOfSlots, r.hoursPerSlot, r.totalValue
     		    FROM registrations r JOIN projects p ON r.projectId = p.projectId
@@ -249,12 +264,11 @@ public class DbUtil {
     	}
     }
     
-    //for mysql cart table
     public static boolean addToCart(int userId, CartItem item) throws SQLException {
         String sql = """
             INSERT INTO cart (userId, projectId, hoursPerSlot, numOfSlots, totalValue) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE hoursPerSlot = VALUES(hoursPerSlot),
             numOfSlots = VALUES(numOfSlots), totalValue = VALUES(totalValue) """;
-        //if we want to update the project for example. 
+        //if we want to update the project slots for example. 
         try (Connection conn = DbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
@@ -268,7 +282,7 @@ public class DbUtil {
 
     public static boolean removeFromCart(int userId, int projectId) throws SQLException {
         try (Connection conn = DbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("DELETE FROM cart WHERE user_id = ? AND project_id = ?")) {
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM cart WHERE userId = ? AND projectId = ?")) {
             stmt.setInt(1, userId);
             stmt.setInt(2, projectId);
             return stmt.executeUpdate() > 0;
@@ -313,7 +327,18 @@ public class DbUtil {
     }
     
     public static boolean createProject(Project project) {
-    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("INSERT INTO projects (title, location, day, hourly, total_slots, registered_slots, available_slots) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+    	try (Connection conn = getConnection(); PreparedStatement checkStmt = conn.prepareStatement("SELECT COUNT(*) FROM projects WHERE title = ?");
+    			PreparedStatement stmt = conn.prepareStatement("INSERT INTO projects (title, location, day, hourly, total_slots, registered_slots, available_slots) VALUES (?, ?, ?, ?, ?, ?, ?)")){
+    		
+    		//check if project title is already in the table 
+            checkStmt.setString(1, project.getTitle());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return false;
+            }
+
+    		
+    		
     		stmt.setString(1, project.getTitle());
     		stmt.setString(2, project.getLocation());
     		stmt.setString(3, project.getDay());
@@ -334,6 +359,7 @@ public class DbUtil {
     }
     
     public static boolean enableOrDisableProject(Project project, boolean value) {
+    	//setting a project's signupavailable to true or false based from their project id 
     	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("UPDATE projects SET signupAvailable = ? WHERE projectId = ?")){
     		for (Project p: projects) {
         		if (p.getTitle().equals(project.getTitle())) {
@@ -364,6 +390,7 @@ public class DbUtil {
             stmt.setInt(4, project.getTotalSlots());
             stmt.setInt(5, project.getAvailableSlots());
             stmt.setInt(6, project.getProjectId());
+            //updating a project based off of the new values provided. 
 
             int rowsUpdated = stmt.executeUpdate();
 
@@ -371,7 +398,6 @@ public class DbUtil {
             	return true;
             	
             }
-            
             return false;
             
         } 
@@ -446,6 +472,7 @@ public class DbUtil {
     
     
     public static boolean registerUser(User user) {
+    	//email and username are unique regardless so even if a user managed to evade the initial checks they would still get an exception.
         try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (username, password, fullname, email) VALUES (?, ?, ?, ?)")) {
             stmt.setString(1, user.getUsername().toLowerCase());
             stmt.setString(2, hashPassword(user.getPassword()));
@@ -493,12 +520,36 @@ public class DbUtil {
     	}
     }
     
+    //this is mainly just for showing the full name from registration 
+    public static String getUserFullNameById(int userId) {
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT fullname FROM users WHERE id = ?")) {
+
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("fullname");
+            } else {
+                return null;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error retrieving user full name: " + e.getMessage());
+            return null;
+        }
+    }
+
+    
+    
     public static boolean changePassword(String oldPass, String newPass, int userId) {
     	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT password FROM users WHERE id = ?")){
     		stmt.setInt(1, userId);
     		ResultSet rs = stmt.executeQuery();
     		
+    		
     		if (rs.next()) {
+    			//if the old password entered doesnt equal the password
     			if (!(hashPassword(oldPass).equals(rs.getString("password")))) {
     				return false;
         			
@@ -508,7 +559,7 @@ public class DbUtil {
     				updateStmt.setString(1, hashPassword(newPass));
     				updateStmt.setInt(2, userId);
     				int ra = updateStmt.executeUpdate();
-    				//rows affected
+    				//ra = rows affected
     				return ra > 0;
     				
     			}
