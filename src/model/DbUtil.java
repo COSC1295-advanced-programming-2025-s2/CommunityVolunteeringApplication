@@ -1,5 +1,8 @@
 package model;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -11,6 +14,7 @@ import java.sql.SQLPermission;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javafx.collections.FXCollections;
@@ -54,39 +58,72 @@ public class DbUtil {
     	}
     	
     }
-    
-//    public static void addProjects (ObservableList<Project> projects) {
-//    	String sql = "INSERT INTO projects (title, location, day, hourly, registered_slots, total_slots, available_slots) VALUES (?, ?, ?, ?, ?, ?, ?)";
-//    	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)){
-//    		for (Project p : projects) {
-//    			stmt.setString(1, p.getTitle());
-//    			stmt.setString(2, p.getLocation());
-//    			stmt.setString(3, p.getDay());
-//    			stmt.setInt(4, p.getHourly());
-//    			stmt.setInt(5, p.getRegisteredSlots());
-//    			stmt.setInt(6, p.getTotalSlots());
-//    			stmt.setInt(7, p.getAvailableSlots());
-//    			stmt.addBatch();
-//    		}
-//    		stmt.executeBatch();
-//    		System.out.println("Successfully imported!");
-//    		conn.close();
-//    	}
-//    	catch (SQLException e) {
-//    		System.err.println("Error occured: " + e);
-//    	}
-//    	
-//    	
-//    }
-    
+//    public static void addProjectsFromCSV(String csv) {
+//        String sql = """
+//                INSERT INTO projects (title, location, day, hourly, registered_slots, total_slots, available_slots)
+//                VALUES (?, ?, ?, ?, ?, ?, ?)
+//                ON DUPLICATE KEY UPDATE location = VALUES(location), hourly = VALUES(hourly), registered_slots = VALUES(registered_slots), total_slots = VALUES(total_slots),
+//                    available_slots = VALUES(available_slots)
+//                """;
+//
+//        try (Connection conn = getConnection();
+//             PreparedStatement stmt = conn.prepareStatement(sql);
+//             BufferedReader reader = new BufferedReader(new FileReader(csv))) {
+//
+//            String line;
+//            boolean isFirstLine = true;
+//
+//            while ((line = reader.readLine()) != null) {
+//                // Skip header if present
+//                if (isFirstLine && line.toLowerCase().contains("title")) {
+//                    isFirstLine = false;
+//                    continue;
+//                }
+//
+//                String[] parts = line.split(",");
+//
+//                if (parts.length < 6) {
+//                    System.err.println("Skipping invalid line: " + line);
+//                    continue;
+//                }
+//
+//                for (int i = 0; i < parts.length; i++) {
+//                    parts[i] = parts[i].trim();
+//                }
+//
+//                stmt.setString(1, parts[0]); 
+//                stmt.setString(2, parts[1]); 
+//                stmt.setString(3, parts[2]); 
+//                stmt.setInt(4, Integer.parseInt(parts[3])); 
+//                stmt.setInt(5, Integer.parseInt(parts[4])); 
+//                stmt.setInt(6, Integer.parseInt(parts[5])); 
+//                stmt.setInt(7, Integer.parseInt(parts[5]) - Integer.parseInt(parts[4])); 
+//                stmt.addBatch();
+//            }
+//
+//            stmt.executeBatch();
+//            System.out.println("Projects imported successfully from CSV");
+//        }
+//        catch (IOException e) {
+//            System.err.println("Error reading CSV: " + e.getMessage());
+//        }
+//        catch (SQLException e) {
+//            System.err.println("SQL error during import: " + e.getMessage());
+//        }
+//        catch (NumberFormatException e) {
+//            System.err.println("Invalid number format: " + e.getMessage());
+//        }
     //I've commented this out to show that I have imported all the data from the csv file into the database and therefore the csv file is redundant. 
+    
+    
+    
     
     //imports the projects from the mysql database into a observable list 
     public static void importProjects(){
     	projects.clear();
         try (Connection conn = getConnection(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT * FROM projects"); ){
         	while (rs.next()) {
-        		projects.add(new Project(rs.getInt("projectId"), rs.getString("title"),rs.getString("location"),rs.getString("day"),rs.getInt("hourly"),rs.getInt("total_slots"),rs.getInt("registered_slots"),rs.getInt("available_slots"), rs.getInt("signupAvailable")));
+        		projects.add(new Project(rs.getInt("projectId"), rs.getString("title"),rs.getString("location"),rs.getString("day"),rs.getInt("hourly"),rs.getInt("registered_slots"),rs.getInt("total_slots"),rs.getInt("available_slots"), rs.getInt("signupAvailable")));
         	}
         	
         	
@@ -143,6 +180,13 @@ public class DbUtil {
                 if (ru == 0) {
                     throw new IllegalStateException();
                 }
+            }
+            
+            //remove from users cart in the system .
+            try (PreparedStatement stmt = conn.prepareStatement("DELETE FROM cart WHERE userId = ? AND projectId = ?")) {
+                stmt.setInt(1, Session.getUser().getUserId());
+                stmt.setInt(2, item.getProject().getProjectId());
+                stmt.executeUpdate();
             }
 
             return true;
@@ -205,6 +249,62 @@ public class DbUtil {
     	}
     }
     
+    //for mysql cart table
+    public static boolean addToCart(int userId, CartItem item) throws SQLException {
+        String sql = """
+            INSERT INTO cart (userId, projectId, hoursPerSlot, numOfSlots, totalValue) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE hoursPerSlot = VALUES(hoursPerSlot),
+            numOfSlots = VALUES(numOfSlots), totalValue = VALUES(totalValue) """;
+        //if we want to update the project for example. 
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, item.getProject().getProjectId());
+            stmt.setInt(3, item.getHoursps());
+            stmt.setInt(4, item.getNumps());
+            stmt.setInt(5, item.getTotalValue());
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public static boolean removeFromCart(int userId, int projectId) throws SQLException {
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("DELETE FROM cart WHERE user_id = ? AND project_id = ?")) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, projectId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    
+    public static void getCartItems() throws SQLException {
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT c.*, p.* FROM cart c JOIN projects p ON c.projectId = p.projectId WHERE c.userId = ?")) {
+            stmt.setInt(1, Session.getUser().getUserId());
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                	int projectId = rs.getInt("projectId");
+                	
+                	//finding matching projects based off of their project id, if not found then itll return null.
+                	Project project = projects.stream().filter(p -> p.getProjectId() == projectId).findFirst().orElse(null);
+
+                	if (project == null) {
+                		//if theres no project we assume that an admin disabled signup or there are no more available slots so we delete it from the users cart. 
+                		removeFromCart(Session.getUser().getUserId(), projectId);
+                	    return;
+                	}
+
+                    CartItem item = new CartItem(project,
+                        rs.getInt("hoursPerSlot"),
+                        rs.getInt("numOfSlots"),
+                        rs.getInt("totalValue")
+                    );
+                    
+                    Cart.addItem(item);
+                }
+            }
+        }
+    }
+
     
 
     
@@ -252,11 +352,96 @@ public class DbUtil {
 		return false;    		
     	}    
     
-    public static boolean changeProject(Project project) {
-    	return true;
+    
+    
+    public static boolean updateProject() throws SQLException {
+    	Project project = Session.getProject();
+        try (Connection conn = getConnection(); 
+             PreparedStatement stmt = conn.prepareStatement("UPDATE projects SET title = ?, location = ?, hourly = ?, total_slots = ?, available_slots = ? WHERE projectId = ? ")) {
+            stmt.setString(1, project.getTitle());
+            stmt.setString(2, project.getLocation());
+            stmt.setInt(3, project.getHourly());
+            stmt.setInt(4, project.getTotalSlots());
+            stmt.setInt(5, project.getAvailableSlots());
+            stmt.setInt(6, project.getProjectId());
+
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+            	return true;
+            	
+            }
+            
+            return false;
+            
+        } 
+        
+        catch (SQLException e) {
+            throw e;
+        }
     }
     
-  
+    
+    
+    public static boolean updateProjectDays(List<String> selectedDays) throws SQLException {
+    	Project selected = Session.getProject();
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false); 
+            // group all updates into one 
+
+            // dlete unselected days for project
+            if (!selectedDays.isEmpty()) {
+                String placeholders = String.join(",", selectedDays.stream().map(d -> "?").toList());
+                //builds placeholder list for the sql statement
+                try (PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM projects WHERE title = ? AND day NOT IN (" + placeholders + ")")) {
+                    deleteStmt.setString(1, selected.getTitle());
+                    //i is 2 and not 1 because i alrdy used the first ? for the title. 
+                    int i = 2;
+                    for (String d : selectedDays) deleteStmt.setString(i++, d);
+                    deleteStmt.executeUpdate();
+                }
+            }
+            
+       
+
+
+
+            // insert for selected days
+            try (PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO projects (title, location, hourly, total_slots, available_slots, day)  VALUES (?, ?, ?, ?, ?, ?)");
+            		PreparedStatement checkStmt = conn.prepareStatement("SELECT COUNT(*) from projects WHERE title = ? AND day = ?")) {
+            	
+            	//if the day is already a row we skip it
+                for (String day : selectedDays) {
+                    checkStmt.setString(1, selected.getTitle());
+                    checkStmt.setString(2, day);
+                    try (ResultSet rs = checkStmt.executeQuery()) {
+                        rs.next();
+                        int count = rs.getInt(1);
+                        if (count > 0) {
+                            continue;
+                        }
+                    }
+                    
+                    //otherwise we add it into our table. 
+                    insertStmt.setString(1, selected.getTitle());
+                    insertStmt.setString(2, selected.getLocation());
+                    insertStmt.setInt(3, selected.getHourly());
+                    insertStmt.setInt(4, selected.getTotalSlots());
+                    insertStmt.setInt(5, selected.getAvailableSlots());
+                    insertStmt.setString(6, day);
+                    insertStmt.addBatch();
+
+                }
+                    
+                insertStmt.executeBatch();
+            }
+
+            conn.commit();
+            return true;
+        } 
+    }
+
+ 
     
     
     
@@ -276,7 +461,7 @@ public class DbUtil {
     
     public static User userLogin(String username, String password) {
     	try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement("SELECT id, username, password, fullname, email FROM users WHERE username = ?")) {
-    		stmt.setString(1, username);
+    		stmt.setString(1, username.toLowerCase());
     		ResultSet rs = stmt.executeQuery();
     		if (rs.next()) {
     			if (rs.getString("password").equals(hashPassword(password))){

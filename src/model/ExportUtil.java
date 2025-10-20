@@ -21,7 +21,7 @@ public class ExportUtil {
             for (Registration r : registrations) {
                 writer.write(String.format("Registration ID: %04d", r.getRegistrationId()));
                 writer.newLine();
-                writer.write("Confirmed at: " + (r.getDate()));
+                writer.write("Confirmed at: " + (r.getDateTime()));
                 writer.newLine();
                 
                 if (username.equals("admin")) {

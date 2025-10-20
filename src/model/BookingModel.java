@@ -23,7 +23,7 @@ public class BookingModel {
 		str += "Cart items:\n";
 		str += Cart.printCartItems();
 		str += "\nParticipant: " + Session.getUser().getUsername();
-		str =  str + "\nTotal contribution value: " + getContributionValue() + " (hourly value × hours × slots)";
+		str =  str + "\nTotal contribution value: $" + getContributionValue() + " (hourly value × hours × slots)";
 		
 		return str;
 	}

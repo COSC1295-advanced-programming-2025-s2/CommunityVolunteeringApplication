@@ -26,6 +26,7 @@ public class SignupModel {
 		ArrayList<String> check = new ArrayList<>();
 		
 		if (name.isEmpty()) {
+			check.add("name cannot be empty");
 			return check;
 		}
 		
@@ -45,6 +46,10 @@ public class SignupModel {
 			if (fullName[1].length() < 2) {
 				check.add("at least 2 characters in your last name");				
 			}
+			
+			if (fullName[0].matches(".*[^a-zA-Z0=9].*") || fullName[1].matches(".*[^a-zA-Z0=9].*")){
+				check.add("no special characters in your name");
+			}
 		}
 		return check;
 	}
@@ -58,6 +63,7 @@ public class SignupModel {
 		//condition ? value_if_true : value_if_false;
 		return success ? null : "An error occurred whilst trying to register the user.";
 	}
+	
 	
 	public static ArrayList<String> emailIsValid(String email){
 		ArrayList<String> check = new ArrayList<>();

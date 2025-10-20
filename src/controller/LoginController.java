@@ -4,11 +4,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.DbUtil;
-import model.LoginModel;
 import model.Session;
 import model.User;
 
 import java.io.IOException;
+import java.sql.SQLException;
+
 import javafx.event.ActionEvent;
 
 
@@ -26,7 +27,7 @@ public class LoginController implements SceneControlled {
 	private SceneController sceneController;
 
 	@FXML 
-	private void loginClicked(ActionEvent event) throws IOException {
+	private void loginClicked(ActionEvent event) throws IOException, SQLException {
 		String usern = username.getText().trim();
 		String pass = password.getText().trim();
 		User user = DbUtil.userLogin(usern, pass);
@@ -45,6 +46,7 @@ public class LoginController implements SceneControlled {
 			//a user object or some other thing instead of just needing the username. 
 			Session.setUser(user);
 			if (user.getUsername().equals("admin")) {
+				user.setAdmin(true);
 				sceneController.switchScene("/view/adminDashboard.fxml");
 			}
 			else {

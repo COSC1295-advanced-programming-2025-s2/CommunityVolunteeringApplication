@@ -51,7 +51,7 @@ public class RegistrationHistoryController implements SceneControlled {
 	
 	@FXML 
 	private void back() throws IOException {
-		if (Session.getUser().getUsername().equals("admin")) {
+		if (Session.getUser().isAdmin()) {
 			sceneController.switchScene("/view/adminDashboard.fxml");
 		}
 		else {

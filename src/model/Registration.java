@@ -24,7 +24,7 @@ public class Registration extends CartItem {
 	}
 	//getters
 	
-	public String getDate() {
+	public String getDateTime() {
 		return dateTime;
 	}
 	

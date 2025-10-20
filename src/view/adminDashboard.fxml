@@ -36,10 +36,9 @@
             <TableView fx:id="projectsTable" prefHeight="424.0" prefWidth="669.0">
                <columns>
                   <TableColumn fx:id="titleCol" prefWidth="199.0" text="Project Title" />
-                  <TableColumn fx:id="locationCol" prefWidth="135.0" text="Location" />
-                  <TableColumn fx:id="dayCol" prefWidth="105.0" text="Day" />
-                  <TableColumn fx:id="hourlyCol" prefWidth="127.0" text="Hourly Value (AUD)" />
-                  <TableColumn fx:id="slotsCol" prefWidth="102.0" text="Slots Remaining" />
+                  <TableColumn fx:id="locationCol" prefWidth="185.0" text="Location" />
+                  <TableColumn fx:id="dayCol" prefWidth="130.0" text="Day" />
+                  <TableColumn fx:id="hourlyCol" prefWidth="154.0" text="Hourly Value (AUD)" />
                </columns>
             </TableView>
             <Label fx:id="msgLabel" prefHeight="17.0" prefWidth="657.0">

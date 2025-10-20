@@ -38,7 +38,10 @@ public class Project {
 		this.registeredSlots = registeredSlots;
 		this.totalSlots = totalSlots;
 		this.availableSlots = availableSlots;
-		if (signupAvailable == 1) {
+		if (availableSlots <= 0 ) {
+			this.signupAvailable = false;
+		}
+		else if (signupAvailable == 1) {
 			this.signupAvailable = true;
 		}
 		else {
@@ -55,15 +58,47 @@ public class Project {
 		this.availableSlots = totalSlots;
 		this.registeredSlots = 0;
 	}
+	
+	
+	//setters
 	public void setDay(String day) {
 		this.day = day;
 	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+		
+	}
+	
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	public void setHourly(int hourly) {
+		this.hourly = hourly;
+	}
+	
+	public boolean setTotalSlots(int totalSlots) {
+		if (totalSlots > registeredSlots) {
+			this.totalSlots = totalSlots;
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	
+	
+	
+	
 	public int getDayNum() {
 		HashMap<String, Integer> days = new HashMap<>();
 		days.put("Mon", 1); days.put("Tue", 2); days.put("Wed", 3); days.put("Thu", 4); days.put("Fri", 5); days.put("Sat", 6); days.put("Sun", 7);
 
 		return days.get(day);
 	}
+	
 	
 	
 	

@@ -3,6 +3,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.Project;
 
 import java.io.IOException;
 
@@ -51,6 +52,7 @@ public class SceneController {
         //stage resizes to fit the scenes preferred size
         stage.show();
     }
+    
     
     public Object getCurrentController() {
     	return currentController;

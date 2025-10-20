@@ -29,7 +29,7 @@ public class AdminDashboardController implements SceneControlled {
 	
 	//table columns 
 	@FXML private TableColumn<Project, String> titleCol; @FXML private TableColumn<Project, String> locationCol; 
-	@FXML private TableColumn<Project, String> dayCol; @FXML private TableColumn<Project, Integer> hourlyCol; @FXML private TableColumn<Project, Integer> slotsCol;
+	@FXML private TableColumn<Project, String> dayCol; @FXML private TableColumn<Project, Integer> hourlyCol;
 	
 	
 
@@ -68,11 +68,15 @@ public class AdminDashboardController implements SceneControlled {
 	}
 	
 	@FXML
-	private void update() {
+	private void update() throws IOException {
 		//WIP
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		if (selected == null) {
 			msgLabel.setText("Please select a project.");
+		}
+		else {
+			Session.setSelectedProject(selected);
+			sceneController.switchScene("/view/updateProject.fxml");
 		}
 		
 	}
@@ -139,7 +143,6 @@ public class AdminDashboardController implements SceneControlled {
 		});
 		
 		hourlyCol.setCellValueFactory(new PropertyValueFactory<>("hourly"));
-		slotsCol.setCellValueFactory(new PropertyValueFactory<>("availableSlots"));
 		
 		
 		projectsTable.setItems(groupedProjectList);

@@ -12,11 +12,8 @@ public class Main extends Application {
         //CHANGES:
         //changed all public fxml methods to private for better practice.
         //NEED TO DO:
-        //admin menu, its already been made but need to implement:
-        //modify project
         //JUnit testing 
         
-        //the SceneController now handles all scene setup and loading so there is no need for scene setup here.
         sceneController.switchScene("/view/loginMenu.fxml");;
 
 

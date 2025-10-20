@@ -17,16 +17,17 @@ public class Cart {
 		cart.removeIf(c -> c.getProject().equals(project));
 	}
 	
-	public static void updateItem(Project project, int hours, int slots) {
+	public static CartItem updateItem(Project project, int hours, int slots) {
 		Iterator<CartItem> it = cart.iterator();
 		while (it.hasNext()) {
 			CartItem item = it.next();
 			if (item.getProject().equals(project)) {
 				item.setHours(hours);
 				item.setSlots(slots);
-				return;
+				return item;
 			}
 		}
+		return null;
 	}
 	
 	

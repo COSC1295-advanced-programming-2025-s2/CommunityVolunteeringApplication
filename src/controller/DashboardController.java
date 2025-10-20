@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.util.Optional;
 import java.util.Set;
@@ -68,7 +69,7 @@ public class DashboardController implements SceneControlled{
 	
 	
 	@FXML
-	private void add() {
+	private void add() throws SQLException {
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		int hours = numOfHoursSpinner.getValue();
 		int slots = numOfSlotsSpinner.getValue();
@@ -80,12 +81,17 @@ public class DashboardController implements SceneControlled{
 			msgLabel.setText("This event has already passed, please pick one in the future.");
 		}
 		//if item is already in cart then 
-		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
+		//switched to equals by project id because it kept allowng duplicates and i didnt want to override the hash and equals function 
+		else if (Cart.getCart().stream().anyMatch(item -> item.getProject().getProjectId() == selected.getProjectId())) {
 			msgLabel.setText("Project is already in cart.");
-			
+
+			return;
+																														
 		}
 		else {
-			Cart.getCart().add(new CartItem(selected, hours, slots));
+			CartItem item = new CartItem(selected, hours, slots);
+			Cart.getCart().add(item);
+			DbUtil.addToCart(Session.getUser().getUserId(), item);
 			msgLabel.setText(selected.getTitle() + " on " + selected.getDay() + " was added to cart!");
 		}
 
@@ -99,7 +105,13 @@ public class DashboardController implements SceneControlled{
 		}
 		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
 			Cart.removeItem(selected);
-			msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully removed from cart!");
+			try {
+				DbUtil.removeFromCart(Session.getUser().getUserId(), selected.getProjectId());
+				msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully removed from cart!");
+			} catch (SQLException e) {
+				msgLabel.setText("An error occurred when trying to remove the project from the cart, please try again.");
+				
+			}
 		}
 		else {
 			msgLabel.setText("Project was not found in cart.");
@@ -116,7 +128,7 @@ public class DashboardController implements SceneControlled{
 	}
 	
 	@FXML
-	private void update() {
+	private void update() throws SQLException {
 		Project selected = projectsTable.getSelectionModel().getSelectedItem();
 		int hours = numOfHoursSpinner.getValue();
 		int slots = numOfSlotsSpinner.getValue();
@@ -126,7 +138,12 @@ public class DashboardController implements SceneControlled{
 		}
 		
 		else if (Cart.getCart().stream().filter(item -> item.getProject().equals(selected)).findFirst().isPresent()) {
-			Cart.updateItem(selected, hours, slots);
+			CartItem item = Cart.updateItem(selected, hours, slots);
+			if (item == null) {
+				msgLabel.setText("Project was unable to be updated, please try again.");
+				return;
+			}
+			DbUtil.addToCart(Session.getUser().getUserId(), item);
 			msgLabel.setText(selected.getTitle() + " on " + selected.getDay() +" was successfully updated!");
 
 		}
@@ -146,9 +163,10 @@ public class DashboardController implements SceneControlled{
 	}
 	
 	
-	public void initialize() {
+	public void initialize() throws SQLException {
 		DbUtil.importProjects(); 
 		DbUtil.importRegistrations();
+		DbUtil.getCartItems();
 		welcomeLabel.setText("Welcome " + Session.getUser().getUsername() +"!");
 		registeredProjectIds = DbUtil.getProjectIds();
 		projects = DbUtil.getProjects();

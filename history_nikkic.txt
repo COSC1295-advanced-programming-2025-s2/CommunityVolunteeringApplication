@@ -1,0 +1,23 @@
+Participation History for nikkic
+=============================================
+
+Registration ID: 0014
+Confirmed at: 2025-10-20 13:11:36
+Project Title: Park Cleanup
+Location: Green Park
+Day: Wed
+Slots: 3
+Hours per Slot: 1
+Total Value: $75
+--------------------------------------------
+
+Registration ID: 0015
+Confirmed at: 2025-10-20 13:11:36
+Project Title: Food Drive
+Location: Community Hall
+Day: Sun
+Slots: 3
+Hours per Slot: 3
+Total Value: $315
+--------------------------------------------
+

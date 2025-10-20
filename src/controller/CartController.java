@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -13,6 +14,7 @@ import model.CartItem;
 import model.DbUtil;
 import model.Project;
 import model.Session;
+import model.CartItem;
 
 public class CartController implements SceneControlled{
 	
@@ -57,7 +59,7 @@ public class CartController implements SceneControlled{
 		
 	}
 	
-	public void initialize() {
+	public void initialize() throws SQLException {
 		//gets the title variable from the Project class and sets the value on the column 
 		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 		locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
@@ -65,7 +67,10 @@ public class CartController implements SceneControlled{
 		hoursCol.setCellValueFactory(new PropertyValueFactory<>("hoursps"));
 		slotsCol.setCellValueFactory(new PropertyValueFactory<>("numps"));
 		
-		cartTable.setItems(Cart.getCart());
+	    Cart.getCart().clear();
+	    DbUtil.getCartItems();
+	    cartTable.setItems(Cart.getCart());
+
 		
 	}
 
